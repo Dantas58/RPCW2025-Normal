@@ -1,0 +1,190 @@
+#12
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?conceito ?nomeConceito
+WHERE {
+    ?mestre rdf:type :Mestre ;
+            :nome "Aristóteles" ;
+            :ensina ?disciplina .
+    ?disciplina :estuda ?conceito .
+    ?conceito :nome ?nomeConceito .
+}
+   
+
+#13
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?obra ?nomeObra ?autor ?nomeAutor
+WHERE {
+    ?conceito rdf:type :Conceito ;
+              :nome "Relatividade" .
+    ?obra rdf:type :Obra ;
+          :explica ?conceito ;
+          :nome ?nomeObra ;
+          :foiEscritoPor ?autor .
+    ?autor :nome ?nomeAutor .
+}
+    
+
+
+#14
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?disciplina ?nomeDisciplina
+WHERE {
+    ?tipoConhecimento rdf:type :TipoDeConhecimento ;
+                      :nome "Ciências Sociais" .
+    ?disciplina rdf:type :Disciplina ;
+                :pertenceA ?tipoConhecimento ;
+                :nome ?nomeDisciplina .
+}
+
+
+#15
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?aplicacao ?nomeAplicacao
+WHERE {
+    ?conceito rdf:type :Conceito ;
+              :nome "Lógica Formal" ;
+              :temAplicacaoEm ?aplicacao .
+    ?aplicacao :nome ?nomeAplicacao .
+}
+
+
+#16
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?disciplina ?nomeDisciplina
+WHERE {
+    ?tipoConhecimento rdf:type :TipoDeConhecimento ;
+                      :nome "Ciências Exatas" .
+    ?disciplina rdf:type :Disciplina ;
+                :pertenceA ?tipoConhecimento ;
+                :nome ?nomeDisciplina .
+}
+
+
+#17
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?mestre ?nomeMestre ?periodo ?nomePeriodo
+WHERE {
+    ?mestre rdf:type :Mestre ;
+            :nome ?nomeMestre ;
+            :viveuEm ?periodo .
+    ?periodo rdf:type :PeriodoHistorico ;
+             :nome ?nomePeriodo .
+    FILTER(CONTAINS(LCASE(?nomePeriodo), "século xix"))
+}
+
+#18
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?nomeAprendiz WHERE {
+  ?conceito rdf:type :Conceito ;
+            :nome "Programação" ;
+            :éEstudadoEm ?disciplina .
+
+  ?aprendiz rdf:type :Aprendiz ;
+            :aprende ?disciplina ;
+            :nome ?nomeAprendiz .
+}
+
+
+#19
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nomeDisciplina (COUNT(?aprendiz) AS ?numeroAprendizes)
+WHERE {
+    ?disciplina rdf:type :Disciplina ;
+                :nome ?nomeDisciplina .
+    ?aprendiz rdf:type :Aprendiz ;
+              :aprende ?disciplina .
+}
+GROUP BY ?nomeDisciplina
+ORDER BY DESC(?numeroAprendizes)
+
+
+#20
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nomePeriodo (COUNT(?conceito) AS ?numeroConceitos)
+WHERE {
+    ?periodo rdf:type :PeriodoHistorico ;
+             :nome ?nomePeriodo .
+    ?conceito rdf:type :Conceito ;
+              :surgeEm ?periodo .
+}
+GROUP BY ?nomePeriodo
+ORDER BY DESC(?numeroConceitos)
+
+
+#21
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?nomeConceito (GROUP_CONCAT(?tituloObra; SEPARATOR="; ") AS ?listaObras)
+WHERE {
+    ?conceito rdf:type :Conceito ;
+              :nome ?nomeConceito .
+    ?obra rdf:type :Obra ;
+          :explica ?conceito ;
+          :nome ?tituloObra .
+}
+GROUP BY ?nomeConceito
+ORDER BY ?nomeConceito
+
+
+
+#22
+
+PREFIX : <http://www.sapientia.org/ontologia#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nomeDisciplina (GROUP_CONCAT(?nomeAprendiz; SEPARATOR="; ") AS ?listaAprendizes)
+WHERE {
+    ?disciplina rdf:type :Disciplina ;
+                :nome ?nomeDisciplina .
+    ?aprendiz rdf:type :Aprendiz ;
+              :aprende ?disciplina ;
+              :nome ?nomeAprendiz .
+}
+GROUP BY ?nomeDisciplina
+ORDER BY ?nomeDisciplina
+
+
+#23
+
+SELECT ?escalao (COUNT(?aprendiz) AS ?numAprendizes) WHERE {
+  ?aprendiz rdf:type :Aprendiz ;
+            :idade ?idade .
+
+  BIND(xsd:integer(?idade) AS ?idadeInt)
+
+  BIND(
+    IF(?idadeInt >= 17 && ?idadeInt <= 34, "[17-34]",
+    IF(?idadeInt >= 35 && ?idadeInt <= 44, "[35-44]",
+    IF(?idadeInt >= 45 && ?idadeInt <= 54, "[45-54]",
+    IF(?idadeInt >= 55 && ?idadeInt <= 64, "[55-64]",
+    IF(?idadeInt >= 65 && ?idadeInt <= 74, "[65-74]",
+                            "[75-100]"))))) AS ?escalao)
+}
+GROUP BY ?escalao
+ORDER BY ?escalao
+

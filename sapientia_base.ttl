@@ -1,0 +1,70 @@
+@prefix : <http://www.sapientia.org/ontologia#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:TipoDeConhecimento a owl:Class .
+:Disciplina a owl:Class .
+:Obra a owl:Class .
+:Mestre a owl:Class .
+:Aprendiz a owl:Class .
+:Conceito a owl:Class .
+:PeríodoHistorico a owl:Class .
+:Aplicação a owl:Class .
+
+#################################################################
+#    Data properties
+#################################################################
+
+:nome a owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string .
+
+:titulo a owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string .
+
+:idade a owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:int .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+:ensina a owl:ObjectProperty ;
+    rdfs:domain :Mestre ;
+    rdfs:range :Disciplina .
+
+:aprende a owl:ObjectProperty ;
+    rdfs:domain :Aprendiz ;
+    rdfs:range :Disciplina .
+
+:pertenceA a owl:ObjectProperty ;
+    rdfs:domain :Disciplina ;
+    rdfs:range :TipoDeConhecimento .
+
+:explica a owl:ObjectProperty ;
+    rdfs:domain :Obra ;
+    rdfs:range :Conceito .
+
+:foiEscritoPor a owl:ObjectProperty ;
+    rdfs:domain :Obra ;
+    rdfs:range :Mestre .
+
+:éEstudadoEm a owl:ObjectProperty ;
+    rdfs:domain :Conceito ;
+    rdfs:range :Disciplina .
+
+:surgeEm a owl:ObjectProperty ;
+    rdfs:domain :Conceito ;
+    rdfs:range :PeríodoHistorico .
+
+:temAplicaçãoEm a owl:ObjectProperty ;
+    rdfs:domain :Conceito ;
+    rdfs:range :Aplicação .
+
+:estáRelacionadoCom a owl:ObjectProperty ;
+    rdfs:domain :Conceito ;
+    rdfs:range :Conceito .
